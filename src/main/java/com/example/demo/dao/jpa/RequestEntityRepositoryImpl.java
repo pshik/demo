@@ -3,18 +3,18 @@ package com.example.demo.dao.jpa;
 import com.example.demo.dao.interfaces.RequestEntityRepository;
 import com.example.demo.dao.model.Request;
 import com.example.demo.dao.model.Request_;
-import com.example.demo.dao.model.User;
+import com.example.demo.dao.model.User_;
 import com.example.demo.enums.RequestStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Repository
+@Component
 public class RequestEntityRepositoryImpl implements RequestEntityRepository {
     @PersistenceContext
     protected EntityManager entityManager;
@@ -38,6 +38,7 @@ public class RequestEntityRepositoryImpl implements RequestEntityRepository {
         entityManager.remove(entity);
     }
 
+
     @Override
     public void save(Request entity) {
         if(entity.getObjectId() == null){
@@ -53,9 +54,24 @@ public class RequestEntityRepositoryImpl implements RequestEntityRepository {
         Root<Request> root = query.from(Request.class);
         CriteriaQuery<Request> select = query.select(root);
 
-        if(userId != null && !userId.isEmpty()){
+        select.where(builder.and(
+             builder.equal(root.get(Request_.user), userId),
+             builder.equal(root.get(Request_.status), RequestStatus.OPEN)
+        ));
+
+        return entityManager.createQuery(select).getResultList();
+   }
+   @Override
+    public List<Request> getOpenedByUsers(List<String> ids) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Request> query = builder.createQuery(Request.class);
+        Root<Request> root = query.from(Request.class);
+
+        CriteriaQuery<Request> select = query.select(root);
+
+        if(ids != null && !ids.isEmpty()){
             select.where(builder.and(
-                 builder.equal(root.get(Request_.user), userId),
+                 root.get(Request_.user).get(User_.objectId).in(ids),
                  builder.equal(root.get(Request_.status), RequestStatus.OPEN)
             ));
         }

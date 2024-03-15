@@ -1,7 +1,15 @@
 package com.example.demo.dao.model;
 
-import com.example.demo.enums.UserStatus;
-import jakarta.persistence.*;
+import com.example.demo.enums.RequestStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serial;
@@ -11,7 +19,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name="REQUEST")
-public class Request  {
+public class Request  implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -19,7 +27,7 @@ public class Request  {
     private String name;
     private String description;
     private User user;
-    private UserStatus status;
+    private RequestStatus status;
 
     public Request() {
         //empty
@@ -66,11 +74,11 @@ public class Request  {
 
     @Enumerated(EnumType.STRING)
     @Column(name="STATUS",nullable = false)
-    public UserStatus getStatus() {
+    public RequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(UserStatus status) {
+    public void setStatus(RequestStatus status) {
         this.status = status;
     }
 
@@ -87,5 +95,16 @@ public class Request  {
         final int prime = 31;
         int result = 1;
         return prime* result + (objectId == null ? 0 : objectId.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "objectId='" + objectId + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", user=" + user +
+                ", status=" + status +
+                '}';
     }
 }

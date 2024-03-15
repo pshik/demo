@@ -1,7 +1,13 @@
 package com.example.demo.dao.model;
 
 import com.example.demo.enums.UserStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.io.Serial;
@@ -11,7 +17,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name="USER")
-public class User {
+public class User implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     private String objectId;
@@ -76,5 +82,15 @@ public class User {
         final int prime = 31;
         int result = 1;
         return prime* result + (objectId == null ? 0 : objectId.hashCode());
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "objectId='" + objectId + '\'' +
+                ", login='" + login + '\'' +
+                ", fio='" + fio + '\'' +
+                ", status=" + status +
+                '}';
     }
 }
